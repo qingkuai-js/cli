@@ -12,7 +12,7 @@ export function MissingCommand() {
 
 export function InitDirectoryNotEmpty(dir: string) {
     consoleErrorLabel(
-        `Target directory is not empty: ${stylePath(dir)}. Use '--force' to write into it.`,
+        `Target directory is not empty: ${stylePath(dir)}. Use '--force' to rebuild it from scratch (existing files are deleted).`,
     );
 }
 

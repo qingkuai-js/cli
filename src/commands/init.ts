@@ -65,7 +65,9 @@ function resolveTarget(): InitTarget | false {
     const isCurrent = cliPositional[0] === ".";
     const position = cliPositional[0] ?? DEFAULT_PROJECT_NAME;
     const dir = isCurrent ? CWD : nodePath.resolve(CWD, position);
-    if (cliOptions.force !== true && isDirectoryNotEmpty(dir)) {
+    if (cliOptions.force === true) {
+        rebuildDirectory(dir, isCurrent);
+    } else if (isDirectoryNotEmpty(dir)) {
         InitDirectoryNotEmpty(getDisplayPath(dir));
         return false;
     }
@@ -81,6 +83,17 @@ function isDirectoryNotEmpty(dir: string) {
         nodeFs.statSync(dir, { throwIfNoEntry: false })?.isDirectory() &&
         nodeFs.readdirSync(dir).length > 0
     );
+}
+
+// --force 语义为整目录重建；当前目录本身不能删（进程工作目录会悬空），等价地清空其内容
+function rebuildDirectory(dir: string, isCurrent: boolean) {
+    if (isCurrent) {
+        for (const entry of nodeFs.readdirSync(dir)) {
+            nodeFs.rmSync(nodePath.join(dir, entry), { recursive: true, force: true });
+        }
+    } else {
+        nodeFs.rmSync(dir, { recursive: true, force: true });
+    }
 }
 
 function restoreDotFiles(dir: string) {

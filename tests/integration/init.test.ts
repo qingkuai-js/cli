@@ -99,7 +99,7 @@ describe("init", () => {
         const forced = await spawnCli(["init", "app", "--force"], workspace);
         expect(forced.code).toBe(0);
         expect(nodeFs.existsSync(nodePath.join(appDir, "package.json"))).toBe(true);
-        expect(nodeFs.readFileSync(nodePath.join(appDir, "keep.txt"), "utf-8")).toBe("keep");
+        expect(nodeFs.existsSync(nodePath.join(appDir, "keep.txt"))).toBe(false);
     });
 
     it("closed loop: check and build must pass on the generated ts project", async () => {
