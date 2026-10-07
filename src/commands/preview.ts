@@ -26,13 +26,14 @@ export class PreviewCommand implements Command {
                 PreviewDistNotFound(getDisplayPath(outDir));
                 return ExitCode.Failure;
             }
-            await preview({
+            const previewServer = await preview({
                 ...userConfig,
                 root: CWD,
                 configFile: false,
                 mode: resolveViteMode(ViteCommand.Preview),
                 preview: { ...userConfig.preview, ...mapCliToServerOptions() },
             });
+            previewServer.printUrls();
             await new Promise(() => {});
         } catch (err) {
             console.error(err);

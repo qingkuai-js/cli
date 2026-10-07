@@ -91,6 +91,22 @@ export function wrapText(text: string, maxWidth: number) {
     return lines.length > 0 ? lines : [text];
 }
 
+/**
+ * 复刻 vite CLI 的启动横幅样式： vite 8 的 JS API 不再打印横幅
+ */
+export function styleViteStartupBanner(version: string, mode: string, durationMs: number): string {
+    const BOLD_OFF = `${CSI}22m`;
+    const GREEN = `${CSI}32m`;
+    const GREEN_OFF = `${CSI}39m`;
+    const DIM = `${CSI}2m`;
+    const modeChip =
+        mode && mode !== "development" ? `  ${CSI}42m ${BOLD}${mode}${BOLD_OFF} ${CSI}49m` : "";
+    return (
+        `\n  ${GREEN}${BOLD}VITE${BOLD_OFF} v${version}${GREEN_OFF}${modeChip}  ` +
+        `${DIM}ready in ${RESET}${BOLD}${durationMs}${BOLD_OFF} ms${BOLD_OFF}`
+    );
+}
+
 /** 获取字符串末尾最后一个颜色码 */
 function getLastColor(str: string): string {
     let lastColor = "";
