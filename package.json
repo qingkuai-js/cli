@@ -1,0 +1,99 @@
+{
+  "name": "@qingkuai/cli",
+  "license": "MIT",
+  "author": "lgq",
+  "type": "module",
+  "version": "1.0.0",
+  "keywords": [
+    "qingkuai",
+    "cli",
+    "vite",
+    "prettier",
+    "typescript",
+    "frontend",
+    "web"
+  ],
+  "sideEffects": false,
+  "description": "The command line toolchain for Qingkuai.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qingkuai-js/qingkuai.git"
+  },
+  "bin": {
+    "qingkuai": "./dist/index.js"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "packageManager": "pnpm@9.9.0",
+  "files": [
+    "dist",
+    "templates",
+    "LICENSE",
+    "README.md",
+    "package.json"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./vite": {
+      "types": "./dist/types/vite.d.ts",
+      "default": "./dist/vite.js"
+    },
+    "./vite/client": {
+      "types": "./dist/types/client.d.ts",
+      "default": "./dist/types/client.d.ts"
+    },
+    "./prettier": {
+      "types": "./dist/types/prettier.d.ts",
+      "default": "./dist/prettier.js"
+    },
+    "./typescript": {
+      "types": "./dist/types/typescript.d.cts",
+      "default": "./dist/typescript.cjs"
+    }
+  },
+  "scripts": {
+    "lint": "eslint",
+    "prepare": "husky",
+    "dev": "rollup -c -w",
+    "bundle": "rollup -c",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm test",
+    "format": "prettier --write .",
+    "test": "npm run build && vitest --run",
+    "build": "rimraf dist && npm run build-types && npm run bundle",
+    "build-types": "tsc --emitDeclarationOnly && tsx scripts/build-types.ts && rimraf dist/temp-types"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,yml,yaml}": "prettier --write"
+  },
+  "peerDependencies": {
+    "qingkuai": "~1.0.101"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@microsoft/api-extractor": "^7.58.9",
+    "@types/node": "^24.12.4",
+    "eslint": "^10.4.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.4.0",
+    "qingkuai": "~1.0.101",
+    "rimraf": "^6.1.3",
+    "rollup": "^4.60.4",
+    "rollup-plugin-esbuild": "^6.2.1",
+    "tsx": "^4.22.2",
+    "typescript-eslint": "^8.59.4",
+    "vitest": "^4.1.8"
+  },
+  "dependencies": {
+    "prettier": "3.9.5",
+    "prettier-plugin-qingkuai": "1.0.46",
+    "qingkuai-language-service": "1.0.19",
+    "typescript": "6.0.3",
+    "vite": "8.3.2",
+    "vite-plugin-qingkuai": "1.0.27"
+  }
+}

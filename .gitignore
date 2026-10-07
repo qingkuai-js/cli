@@ -1,0 +1,13 @@
+.claude
+.history
+.DS_Store
+
+dist
+prompts
+coverage
+test-space
+test-results
+node_modules
+
+IMPLEMENTATION.md
+qingkuai-cli-*.tgz

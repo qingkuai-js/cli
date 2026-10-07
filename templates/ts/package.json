@@ -1,0 +1,14 @@
+{
+    "private": true,
+    "type": "module",
+    "version": "1.0.0",
+    "scripts": {
+        "dev": "qingkuai dev",
+        "build": "qingkuai build",
+        "preview": "qingkuai preview",
+        "check": "qingkuai check src --types",
+        "format": "qingkuai format src --write"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+}

@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "noEmit": true,
+        "target": "es2015",
+        "module": "ESNext",
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "lib": ["ESNext", "DOM"],
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "types": ["@qingkuai/cli/vite/client"],
+        "forceConsistentCasingInFileNames": true
+    },
+    "exclude": ["node_modules", "dist"]
+}

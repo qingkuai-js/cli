@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "module": "ESNext",
+    "declaration": true,
+    "esModuleInterop": true,
+    "paths": {
+      "#type-declarations": ["./src/types.ts"]
+    },
+    "outDir": "dist/temp-types",
+    "emitDeclarationOnly": true,
+    "moduleResolution": "Bundler",
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["dist", "node_modules/**/*", "tests/integration/fixtures/**/*"],
+  "include": ["src", "tests", "scripts", "dist/temp-types", "test-space"]
+}

@@ -1,0 +1,25 @@
+<lang-js>
+    import Hello from "./components/Hello"
+</lang-js>
+
+<div class="app-container">
+    <main class="main-content">
+        <Hello !title={"Get started with qingkuai"} />
+    </main>
+</div>
+
+<lang-css>
+    .app-container {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .main-content {
+        width: 100%;
+        max-width: 960px;
+    }
+</lang-css>

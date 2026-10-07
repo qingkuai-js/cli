@@ -1,0 +1,14 @@
+src
+tests
+scripts
+node_modules
+
+.DS_Store
+.vscode
+.history
+.gitignore
+.prettierrc
+
+env.d.ts
+tsconfig.json
+pnpm-lock.yaml
