@@ -17,7 +17,7 @@
   "description": "The command line toolchain for Qingkuai.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qingkuai-js/qingkuai.git"
+    "url": "git+https://github.com/qingkuai-js/cli.git"
   },
   "bin": {
     "qingkuai": "./dist/index.js"
