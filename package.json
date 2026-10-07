@@ -65,7 +65,8 @@
     "format": "prettier --write .",
     "test": "npm run build && vitest --run",
     "build": "rimraf dist && npm run build-types && npm run bundle",
-    "build-types": "tsc --emitDeclarationOnly && tsx scripts/build-types.ts && rimraf dist/temp-types"
+    "build-types": "tsc --emitDeclarationOnly && tsx scripts/build-types.ts && rimraf dist/temp-types",
+    "postpublish": "curl -X PUT 'https://registry-direct.npmmirror.com/-/package/@qingkuai%2Fcli/syncs'"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,json,md,yml,yaml}": "prettier --write"
