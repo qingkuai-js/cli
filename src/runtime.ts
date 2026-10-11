@@ -5,10 +5,24 @@ import { CWD } from "./constants";
 import { globCharsRE } from "./regular";
 import { cliPositional } from "./state";
 
-export function getInputFiles(isFileProcessable?: (path: string) => boolean) {
+export function getInputFiles(
+    isFileProcessable?: (path: string) => boolean,
+    fallbackFiles: readonly string[] = [],
+) {
+    const result = new Set<string>();
+
+    // 无位置参数时回退到 tsconfig 的 include/files 解析结果
+    if (!cliPositional.length) {
+        for (const filePath of fallbackFiles) {
+            if (!isFileProcessable || isFileProcessable(filePath)) {
+                result.add(filePath);
+            }
+        }
+        return result;
+    }
+
     const includes: string[] = [];
     const excludes: string[] = [];
-    const result = new Set<string>();
     for (const p of cliPositional) {
         if (!p.startsWith("!")) {
             includes.push(p);

@@ -109,6 +109,11 @@ export interface ResolveConfigOptions {
     cliOverrides?: StrUnknown;
 }
 
+export interface ResolvedTypescriptConfig {
+    fileNames: string[];
+    compilerOptions: TS.CompilerOptions;
+}
+
 export interface QkFileInfoSnapshot {
     source: string;
     code: string;

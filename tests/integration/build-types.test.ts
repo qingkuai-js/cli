@@ -41,4 +41,24 @@ describe("build-types", () => {
         expect(result.code).toBe(1);
         expect(result.output).toContain("no processable files");
     });
+
+    it("emits declarations from the tsconfig include fallback when no positional files are given", async () => {
+        workspace = createWorkspace("check-tsconfig-fallback");
+        const result = await spawnCli(["build-types", "--out", "dist"], workspace);
+        expect(result.code).toBe(0);
+        const declaration = nodeFs.readFileSync(
+            nodePath.join(workspace, "dist", "main.d.ts"),
+            "utf-8",
+        );
+        expect(declaration).toContain("a: number");
+    });
+
+    it("emits declarations only for positional files when the program includes project context", async () => {
+        workspace = createWorkspace("check-tsconfig-context");
+        const result = await spawnCli(["build-types", "src/main.ts", "--out", "dist"], workspace);
+        expect(result.code).toBe(0);
+        expect(nodeFs.existsSync(nodePath.join(workspace, "dist", "main.d.ts"))).toBe(true);
+        expect(nodeFs.existsSync(nodePath.join(workspace, "dist", "broken.d.ts"))).toBe(false);
+        expect(nodeFs.existsSync(nodePath.join(workspace, "dist", "env.d.ts"))).toBe(false);
+    });
 });

@@ -12,13 +12,14 @@ import { isQingkuaiFileName } from "../utils/assert";
 import { createTypescriptProgram } from "../core/program";
 import { createDiagnosticCollector } from "../diagnostic";
 import { CheckNoProcessableFiles } from "../messages/error";
-import { resolveTypescriptConfigOptions } from "../configs/typescript";
+import { resolveTypescriptConfig } from "../configs/typescript";
 import { correctDiagnosticLoc } from "qingkuai-language-service/adapters";
 import { getQingkuaiFileInfo, getQingkuaiIntermidiateCompileResult } from "../core/qingkuai";
 
 export class CheckCommand implements Command {
     execute(): ExitCode {
-        const tsCompilerOptions = resolveTypescriptConfigOptions();
+        const { compilerOptions, fileNames } = resolveTypescriptConfig();
+
         const inputFiles = getInputFiles(path => {
             switch (getFileExtension(path)) {
                 case ".qk":
@@ -33,24 +34,24 @@ export class CheckCommand implements Command {
                 case ".mjs":
                 case ".cjs":
                 case ".jsx": {
-                    return !!tsCompilerOptions.allowJs;
+                    return !!compilerOptions.allowJs;
                 }
                 default: {
                     return false;
                 }
             }
-        });
+        }, fileNames);
 
         const diagnosticCollector = createDiagnosticCollector();
         if (!inputFiles.size) {
             return (CheckNoProcessableFiles(), ExitCode.Failure);
         }
-        collectSyntaxDiagnostics(diagnosticCollector, inputFiles, tsCompilerOptions);
+        collectSyntaxDiagnostics(diagnosticCollector, inputFiles, compilerOptions);
 
         if (cliOptions.types) {
             collectSemanticDiagnostics(
                 diagnosticCollector,
-                createTypescriptProgram(inputFiles, tsCompilerOptions),
+                createTypescriptProgram(new Set([...inputFiles, ...fileNames]), compilerOptions),
                 inputFiles,
             );
         }

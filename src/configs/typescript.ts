@@ -1,5 +1,7 @@
 import type TS from "typescript";
 
+import type { ResolvedTypescriptConfig } from "../types";
+
 import ts from "typescript";
 import nodeFs from "node:fs";
 import nodePath from "node:path";
@@ -21,7 +23,7 @@ const DEFAULT_TS_COMPILER_OPTIONS: Readonly<TS.CompilerOptions> = {
     moduleResolution: ts.ModuleResolutionKind.NodeNext,
 };
 
-export function resolveTypescriptConfigOptions(): TS.CompilerOptions {
+export function resolveTypescriptConfig(): ResolvedTypescriptConfig {
     let configFilePath: string | undefined;
     const cliCompilerOptions = mapCliToTypescriptOptions();
     if (!isString(cliOptions.project)) {
@@ -57,10 +59,25 @@ export function resolveTypescriptConfigOptions(): TS.CompilerOptions {
                 parseHost,
                 nodePath.dirname(configFilePath),
             );
-            return { ...parsed.options, ...cliCompilerOptions };
+            return {
+                compilerOptions: {
+                    // configFilePath 让 createProgram 将 types 的默认解析锚定到 tsconfig 所在目录（tsc 语义），缺失时会退回进程 cwd；
+                    // parsed.options 带有显式 undefined 的同名键，必须放在最后覆盖
+                    ...parsed.options,
+                    ...cliCompilerOptions,
+                    configFilePath,
+                },
+                fileNames: parsed.fileNames,
+            };
         }
     }
-    return { ...DEFAULT_TS_COMPILER_OPTIONS, ...cliCompilerOptions };
+    return {
+        compilerOptions: {
+            ...DEFAULT_TS_COMPILER_OPTIONS,
+            ...cliCompilerOptions,
+        },
+        fileNames: [],
+    };
 }
 
 function findProjectConfig(dir: string) {
