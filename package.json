@@ -3,7 +3,7 @@
   "license": "MIT",
   "author": "lgq",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "keywords": [
     "qingkuai",
     "cli",
@@ -63,6 +63,7 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm test",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "npm run build && vitest --run",
     "build": "rimraf dist && npm run build-types && npm run bundle",
     "build-types": "tsc --emitDeclarationOnly && tsx scripts/build-types.ts && rimraf dist/temp-types",

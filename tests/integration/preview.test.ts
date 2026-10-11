@@ -40,6 +40,6 @@ describe("preview", () => {
 
         const page = await fetch(`http://localhost:${PORT}/`);
         expect(page.status).toBe(200);
-        expect((await page.text())).toContain("<!doctype html>");
+        expect(await page.text()).toContain("<!doctype html>");
     });
 });

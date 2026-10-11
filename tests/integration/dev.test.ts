@@ -29,7 +29,7 @@ describe("dev", () => {
 
         const page = await fetch(`http://localhost:${PORT}/`);
         expect(page.status).toBe(200);
-        expect((await page.text())).toContain("<!doctype html>");
+        expect(await page.text()).toContain("<!doctype html>");
 
         // .qk 必须返回编译产物而非原始模板
         const module = await fetch(`http://localhost:${PORT}/src/App.qk?import`);
