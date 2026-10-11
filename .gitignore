@@ -11,3 +11,4 @@ node_modules
 
 IMPLEMENTATION.md
 qingkuai-cli-*.tgz
+!tests/integration/fixtures/**/node_modules
