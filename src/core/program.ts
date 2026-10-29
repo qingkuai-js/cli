@@ -10,6 +10,11 @@ import {
 import { ADAPTER_PATH } from "./adapters";
 import { getQingkuaiFileInfo } from "./qingkuai";
 import { getQingkuaiConfig } from "../configs/qingkuai";
+import { createLogger } from "qingkuai-language-service";
+
+const logger = createLogger({
+    write: (msg: string) => process.stderr.write(`${msg}\n`),
+});
 
 export function createTypescriptProgram(
     inputFiles: Set<string>,
@@ -89,6 +94,7 @@ export function createTypescriptProgram(
         const fileInfo = getQingkuaiFileInfo(program, path);
         confirmTypesForCompileResult(
             ts,
+            logger,
             fileInfo,
             newContent => {
                 fileInfo.code = newContent;

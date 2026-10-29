@@ -3,7 +3,7 @@
   "license": "MIT",
   "author": "lgq",
   "type": "module",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "keywords": [
     "qingkuai",
     "cli",
@@ -91,9 +91,10 @@
     "vitest": "^4.1.8"
   },
   "dependencies": {
+    "@vscode/emmet-helper": "2.11.0",
     "prettier": "3.9.5",
     "prettier-plugin-qingkuai": "1.0.46",
-    "qingkuai-language-service": "1.0.19",
+    "qingkuai-language-service": "1.0.21",
     "typescript": "6.0.3",
     "vite": "8.3.2",
     "vite-plugin-qingkuai": "1.0.29"
