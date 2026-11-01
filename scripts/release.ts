@@ -75,9 +75,10 @@ function release(): void {
 
     run("git", ["add", "package.json"]);
     run("git", ["commit", "-m", `release: bump version to ${tag}`]);
+    run("git", ["tag", tag]);
     run("git", ["push"]);
-
-    console.log(`Pushed ${tag}, run the Release workflow to create the tag and publish`);
+    run("git", ["push", "origin", tag]);
+    console.log(`Released ${tag}`);
 }
 
 function main(): void {
