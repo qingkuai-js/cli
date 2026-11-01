@@ -27,12 +27,14 @@ describe("dev", () => {
         );
         stopServer = server.stop;
 
-        const page = await fetch(`http://localhost:${PORT}/`);
+        const page = await fetch(`http://localhost:${PORT}/`, { headers: { connection: "close" } });
         expect(page.status).toBe(200);
         expect(await page.text()).toContain("<!doctype html>");
 
         // .qk 必须返回编译产物而非原始模板
-        const module = await fetch(`http://localhost:${PORT}/src/App.qk?import`);
+        const module = await fetch(`http://localhost:${PORT}/src/App.qk?import`, {
+            headers: { connection: "close" },
+        });
         expect(module.status).toBe(200);
         expect(await module.text()).toContain("createFragmentGetter");
     });

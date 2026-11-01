@@ -168,6 +168,11 @@ export interface QkProject {
     dispose(): void;
 }
 
+export interface PackageManifest {
+    version?: string;
+    [key: string]: unknown;
+}
+
 export type ViteServerOptionsFragment = Pick<
     NonNullable<ViteServerConfig>,
     "port" | "host" | "open"

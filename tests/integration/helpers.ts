@@ -102,7 +102,12 @@ export async function startServer(args: string[], cwd: string, url: string): Pro
             break;
         }
         try {
-            const res = await fetch(url);
+            // 不消费响应体、也不关连接，undici 会把这条 socket 留在池子里，
+            // 服务进程被杀后池里那条死连接的写入会冒成 unhandled 的 setTypeOfService 错误
+            // An unconsumed body leaves the socket pooled; after the server process dies a
+            // write on that dead socket surfaces as an unhandled setTypeOfService error
+            const res = await fetch(url, { headers: { connection: "close" } });
+            await res.body?.cancel();
             if (res.ok) {
                 ready = true;
                 break;

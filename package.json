@@ -63,6 +63,7 @@
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm test",
     "format": "prettier --write .",
+    "release": "tsx scripts/release.ts",
     "format:check": "prettier --check .",
     "test": "npm run build && vitest --run",
     "build": "rimraf dist && npm run build-types && npm run bundle",

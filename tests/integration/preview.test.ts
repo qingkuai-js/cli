@@ -38,7 +38,7 @@ describe("preview", () => {
         );
         stopServer = server.stop;
 
-        const page = await fetch(`http://localhost:${PORT}/`);
+        const page = await fetch(`http://localhost:${PORT}/`, { headers: { connection: "close" } });
         expect(page.status).toBe(200);
         expect(await page.text()).toContain("<!doctype html>");
     });
