@@ -4,16 +4,22 @@ import nodePath from "node:path";
 
 import { CWD, UTF8 } from "../constants";
 
+export function normalizePath(path: string) {
+    return path.replaceAll("\\", "/");
+}
+
 export function getDisplayPath(path: string) {
-    if (!path.startsWith(CWD)) {
+    const normalizedPath = normalizePath(path);
+    const normalizedCwd = normalizePath(CWD);
+    if (!normalizedPath.startsWith(normalizedCwd)) {
         return path;
     }
 
-    const dir = nodePath.dirname(path);
-    if (dir !== CWD) {
-        return nodePath.relative(CWD, path);
+    const dir = nodePath.dirname(normalizedPath);
+    if (dir !== normalizedCwd) {
+        return nodePath.relative(normalizedCwd, normalizedPath);
     }
-    return "./" + nodePath.basename(path);
+    return "./" + nodePath.basename(normalizedPath);
 }
 
 export function getFileExtension(filePath: string): string {
@@ -45,35 +51,5 @@ export function findPackageRoot(moduleUrl: string): string | false {
             return false;
         }
         current = parent;
-    }
-}
-
-export function walkDir(dir: string, callback: (filePath: string) => void): void {
-    let entries: string[];
-
-    try {
-        entries = nodeFs.readdirSync(dir);
-    } catch {
-        return;
-    }
-
-    for (const entry of entries) {
-        const fullPath = nodePath.resolve(dir, entry);
-
-        let stat: nodeFs.Stats;
-        try {
-            stat = nodeFs.statSync(fullPath);
-        } catch {
-            continue;
-        }
-
-        if (stat.isDirectory()) {
-            if (!entry.startsWith(".") && entry !== "node_modules") {
-                walkDir(fullPath, callback);
-            }
-            continue;
-        }
-
-        callback(fullPath);
     }
 }

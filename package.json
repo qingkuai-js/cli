@@ -96,6 +96,6 @@
     "qingkuai-language-service": "1.0.23",
     "typescript": "6.0.3",
     "vite": "8.3.2",
-    "vite-plugin-qingkuai": "1.0.29"
+    "vite-plugin-qingkuai": "1.0.31"
   }
 }

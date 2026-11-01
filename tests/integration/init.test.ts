@@ -1,11 +1,17 @@
 import { afterEach, describe, expect, it } from "vitest";
 
 import nodeFs from "node:fs";
-import nodeOs from "node:os";
 import nodePath from "node:path";
 import nodeChildProcess from "node:child_process";
 
-import { CLI_ENTRY, REPO_ROOT, disposeWorkspace, linkDirectory, spawnCli } from "./helpers";
+import {
+    spawnCli,
+    CLI_ENTRY,
+    REPO_ROOT,
+    linkDirectory,
+    disposeWorkspace,
+    createTempWorkspace,
+} from "./helpers";
 
 // 生成物直接过 check + build 形成闭环：模板正确性验证。
 function linkRuntime(dir: string) {
@@ -30,7 +36,8 @@ afterEach(() => {
 
 describe("init", () => {
     it("js template (default): file tree, CLI scripts, version injection, title replacement, dotfile restoration", async () => {
-        workspace = nodeFs.mkdtempSync(nodePath.join(nodeOs.tmpdir(), "qk-cli-it-"));
+        workspace = createTempWorkspace();
+
         const result = await spawnCli(["init", "my-app"], workspace);
         expect(result.code).toBe(0);
 
@@ -69,7 +76,8 @@ describe("init", () => {
     });
 
     it("ts template: --ts emits main.ts and tsconfig.json", async () => {
-        workspace = nodeFs.mkdtempSync(nodePath.join(nodeOs.tmpdir(), "qk-cli-it-"));
+        workspace = createTempWorkspace();
+
         const result = await spawnCli(["init", "my-ts-app", "--ts"], workspace);
         expect(result.code).toBe(0);
 
@@ -85,7 +93,8 @@ describe("init", () => {
     });
 
     it("rejects non-empty directory unless --force is given", async () => {
-        workspace = nodeFs.mkdtempSync(nodePath.join(nodeOs.tmpdir(), "qk-cli-it-"));
+        workspace = createTempWorkspace();
+
         const appDir = nodePath.join(workspace, "app");
         nodeFs.mkdirSync(appDir);
         nodeFs.writeFileSync(nodePath.join(appDir, "keep.txt"), "keep", "utf-8");
@@ -102,7 +111,8 @@ describe("init", () => {
     });
 
     it("closed loop: check and build must pass on the generated ts project", async () => {
-        workspace = nodeFs.mkdtempSync(nodePath.join(nodeOs.tmpdir(), "qk-cli-it-"));
+        workspace = createTempWorkspace();
+
         const init = await spawnCli(["init", "loop-app", "--ts"], workspace);
         expect(init.code).toBe(0);
 
@@ -118,7 +128,7 @@ describe("init", () => {
             cwd: appDir,
             encoding: "utf-8",
         });
-        expect(built.status).toBe(0);
+        expect(built.status, built.stderr || built.stdout).toBe(0);
         expect(nodeFs.existsSync(nodePath.join(appDir, "dist", "index.html"))).toBe(true);
     });
 });

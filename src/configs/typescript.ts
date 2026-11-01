@@ -91,9 +91,11 @@ function findProjectConfig(dir: string) {
         if (nodeFs.existsSync(jsconfig)) {
             return jsconfig;
         }
-        if (!dir || dir === "/") {
+
+        const parent = nodePath.dirname(dir);
+        if (!parent || parent === dir) {
             return;
         }
-        dir = nodePath.dirname(dir);
+        dir = parent;
     }
 }

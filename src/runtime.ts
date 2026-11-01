@@ -4,6 +4,7 @@ import nodePath from "node:path";
 import { CWD } from "./constants";
 import { globCharsRE } from "./regular";
 import { cliPositional } from "./state";
+import { normalizePath } from "./utils/file";
 
 export function getInputFiles(
     isFileProcessable?: (path: string) => boolean,
@@ -15,7 +16,7 @@ export function getInputFiles(
     if (!cliPositional.length) {
         for (const filePath of fallbackFiles) {
             if (!isFileProcessable || isFileProcessable(filePath)) {
-                result.add(filePath);
+                result.add(normalizePath(filePath));
             }
         }
         return result;
@@ -35,14 +36,14 @@ export function getInputFiles(
     for (const pattern of includes) {
         applyFilesForPattern(pattern, filePath => {
             if (!isFileProcessable || isFileProcessable(filePath)) {
-                result.add(filePath);
+                result.add(normalizePath(filePath));
             }
         });
     }
 
     // 移除 exclude 匹配的文件
     for (const pattern of excludes) {
-        applyFilesForPattern(pattern, filePath => result.delete(filePath));
+        applyFilesForPattern(pattern, filePath => result.delete(normalizePath(filePath)));
     }
 
     return result;
@@ -53,8 +54,14 @@ export function walkDir(dir: string, callback: (filePath: string) => void): void
         for (const entry of nodeFs.readdirSync(dir)) {
             const fullPath = nodePath.resolve(dir, entry);
             try {
-                if (nodeFs.statSync(fullPath).isDirectory()) {
-                    if (!entry.startsWith(".")) {
+                // 链接一律跳过：node_modules 里的软链/junction 会指回包目录甚至成环，
+                // 扫描进去在 Windows 上足以耗掉几十秒
+                const stat = nodeFs.lstatSync(fullPath);
+                if (stat.isSymbolicLink()) {
+                    continue;
+                }
+                if (stat.isDirectory()) {
+                    if (!entry.startsWith(".") && entry !== "node_modules") {
                         walkDir(fullPath, callback);
                     }
                     continue;

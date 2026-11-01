@@ -3,11 +3,14 @@ import type { AnyObject } from "#type-declarations";
 import nodePath from "node:path";
 
 import { CWD } from "../constants";
+import { normalizePath } from "./file";
 import { kebabCharRE, versionRE, versionRangeRE } from "../regular";
 
 export function getShownPath(path: string) {
-    if (path.startsWith(CWD)) {
-        return nodePath.relative(CWD, path);
+    const normalizedPath = normalizePath(path);
+    const normalizedCwd = normalizePath(CWD);
+    if (normalizedPath.startsWith(normalizedCwd)) {
+        return nodePath.relative(normalizedCwd, normalizedPath);
     }
     return path;
 }

@@ -10,7 +10,8 @@ export default defineConfig({
     },
     test: {
         include: ["tests/units/**/*.test.ts", "tests/integration/**/*.test.ts"],
+        testTimeout: 40000,
+        maxWorkers: process.env.CI ? 1 : undefined,
         globalSetup: ["./tests/global-teardown.ts"],
-        testTimeout: 30000,
     },
 });
