@@ -1,5 +1,5 @@
 import type { StrUnknown } from "#type-declarations";
-import type { QingkuaiConfiguration } from "qingkuai-language-service";
+import type { QingkuaiConfiguration } from "qingkuai-language-service/config";
 
 import { cliOptions } from "../state";
 

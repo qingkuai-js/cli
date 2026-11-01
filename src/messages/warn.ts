@@ -10,6 +10,10 @@ export function BuildFormatIgnored(flags: string[]) {
     );
 }
 
+export function InvalidQingkuaiConfig(configFile: string, message: string) {
+    consoleWarnLabel(`${stylePath(configFile)} - ${message}`);
+}
+
 export function UnsupportedQingkuaiVersion(version: string, range: string) {
     consoleWarnLabel(
         `The workspace "qingkuai" version (${version}) is outside the supported range (${range}). Mismatched language semantics may produce incorrect checks or output — please align the versions of qingkuai and @qingkuai/cli.`,
