@@ -9,7 +9,7 @@ import nodePath from "node:path";
 import { CWD } from "../constants";
 import { cliOptions } from "../state";
 import { isString } from "../utils/assert";
-import { getShownPath } from "../utils/sundry";
+import { getDisplayPath } from "../utils/file";
 import { ProjectConfigParseFailed } from "../messages/error";
 import { getTsDiagnosticMsg } from "../diagnostic/typescript";
 import { mapCliToTypescriptOptions } from "../options/typescript";
@@ -35,7 +35,7 @@ export function resolveTypescriptConfig(): ResolvedTypescriptConfig {
         const configFile = ts.readConfigFile(configFilePath, ts.sys.readFile);
         if (configFile.error) {
             ProjectConfigParseFailed(
-                getShownPath(configFilePath),
+                getDisplayPath(configFilePath),
                 getTsDiagnosticMsg(configFile.error),
             );
         } else {
@@ -93,7 +93,7 @@ function findProjectConfig(dir: string) {
         }
 
         const parent = nodePath.dirname(dir);
-        if (!parent || parent === dir) {
+        if (parent === dir) {
             return;
         }
         dir = parent;

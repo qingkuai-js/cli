@@ -2,22 +2,22 @@ import nodeFs from "node:fs";
 import nodeUrl from "node:url";
 import nodePath from "node:path";
 
-import { CWD, UTF8 } from "../constants";
+import { NORMALIZED_CWD, UTF8 } from "../constants";
 
 export function normalizePath(path: string) {
     return path.replaceAll("\\", "/");
 }
 
+// 展示用路径：在 CWD 下时取相对路径，统一正斜杠
 export function getDisplayPath(path: string) {
     const normalizedPath = normalizePath(path);
-    const normalizedCwd = normalizePath(CWD);
-    if (!normalizedPath.startsWith(normalizedCwd)) {
-        return path;
+    if (!normalizedPath.startsWith(NORMALIZED_CWD)) {
+        return normalizedPath;
     }
 
     const dir = nodePath.dirname(normalizedPath);
-    if (dir !== normalizedCwd) {
-        return nodePath.relative(normalizedCwd, normalizedPath);
+    if (dir !== NORMALIZED_CWD) {
+        return normalizePath(nodePath.relative(NORMALIZED_CWD, normalizedPath));
     }
     return "./" + nodePath.basename(normalizedPath);
 }

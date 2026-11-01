@@ -18,4 +18,5 @@ export const ESC = "\x1b";
 export const UTF8 = "utf-8";
 export const CWD = process.cwd();
 export const DEFAULT_PROJECT_NAME = "qingkuai-app";
+export const NORMALIZED_CWD = CWD.replaceAll("\\", "/");
 export const TERMINAL_WIDTH: number = process.stdout.columns || 80;

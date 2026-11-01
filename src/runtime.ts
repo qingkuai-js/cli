@@ -15,11 +15,17 @@ export function getInputFiles(
     // 无位置参数时回退到 tsconfig 的 include/files 解析结果
     if (!cliPositional.length) {
         for (const filePath of fallbackFiles) {
-            if (!isFileProcessable || isFileProcessable(filePath)) {
-                result.add(normalizePath(filePath));
-            }
+            addProcessable(filePath);
         }
         return result;
+    }
+
+    // TypeScript 报告的 SourceFile.fileName 一律是正斜杠，集合里存归一化后的路径
+    function addProcessable(filePath: string) {
+        const normalizedPath = normalizePath(filePath);
+        if (!isFileProcessable || isFileProcessable(normalizedPath)) {
+            result.add(normalizedPath);
+        }
     }
 
     const includes: string[] = [];
@@ -34,11 +40,7 @@ export function getInputFiles(
 
     // 收集 include 匹配的文件
     for (const pattern of includes) {
-        applyFilesForPattern(pattern, filePath => {
-            if (!isFileProcessable || isFileProcessable(filePath)) {
-                result.add(normalizePath(filePath));
-            }
-        });
+        applyFilesForPattern(pattern, addProcessable);
     }
 
     // 移除 exclude 匹配的文件
@@ -50,29 +52,44 @@ export function getInputFiles(
 }
 
 export function walkDir(dir: string, callback: (filePath: string) => void): void {
+    walkDirectory(nodePath.resolve(dir), callback, new Set());
+}
+
+// 链接照常跟随（monorepo 里目录常是指向别处的软链），但同一个真实目录只展开一次，链接指回祖先时不会无限递归
+function walkDirectory(dir: string, callback: (filePath: string) => void, visited: Set<string>) {
+    let realDir: string;
     try {
-        for (const entry of nodeFs.readdirSync(dir)) {
-            const fullPath = nodePath.resolve(dir, entry);
-            try {
-                // 链接一律跳过：node_modules 里的软链/junction 会指回包目录甚至成环，
-                // 扫描进去在 Windows 上足以耗掉几十秒
-                const stat = nodeFs.lstatSync(fullPath);
-                if (stat.isSymbolicLink()) {
-                    continue;
-                }
-                if (stat.isDirectory()) {
-                    if (!entry.startsWith(".") && entry !== "node_modules") {
-                        walkDir(fullPath, callback);
-                    }
-                    continue;
-                }
-                callback(fullPath);
-            } catch {
-                // do nothing
-            }
-        }
+        realDir = nodeFs.realpathSync(dir);
     } catch {
-        // do nothing
+        return;
+    }
+    if (visited.has(realDir)) {
+        return;
+    }
+    visited.add(realDir);
+
+    let entries: string[];
+    try {
+        entries = nodeFs.readdirSync(dir);
+    } catch {
+        return;
+    }
+
+    for (const entry of entries) {
+        const fullPath = nodePath.resolve(dir, entry);
+        let stat: nodeFs.Stats;
+        try {
+            stat = nodeFs.statSync(fullPath);
+        } catch {
+            continue;
+        }
+        if (stat.isDirectory()) {
+            if (!entry.startsWith(".") && entry !== "node_modules") {
+                walkDirectory(fullPath, callback, visited);
+            }
+            continue;
+        }
+        callback(fullPath);
     }
 }
 

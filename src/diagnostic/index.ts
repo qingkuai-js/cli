@@ -5,10 +5,11 @@ import nodeUtil from "node:util";
 import { cliOptions } from "../state";
 import { readFileSync } from "../utils/file";
 import { isUndefined } from "../utils/assert";
+import { getDisplayPath } from "../utils/file";
+import { joinWithNewLine } from "../utils/sundry";
 import { formatTsDiagnostic } from "./typescript";
 import { newLineRE, leadingWhitespaceRE } from "../regular";
 import { CWD, ExitCode, TERMINAL_WIDTH } from "../constants";
-import { getShownPath, joinWithNewLine } from "../utils/sundry";
 import { red, yellow, gray, stylePath, wrapText } from "../utils/format";
 
 export function createDiagnosticCollector() {
@@ -66,7 +67,7 @@ export function createDiagnosticFormatter(options: DiagnosticFormatterOptions = 
 
     const format = (entry: DiagnosticEntry, maxLineWidth: number): string => {
         const withCode = !isUndefined(entry.code);
-        const shownPath = getShownPath(entry.filePath).replaceAll("\\", "/");
+        const shownPath = getDisplayPath(entry.filePath);
         const messageColor = entry.category === "error" ? red : yellow;
         const catagoryLabel = entry.category === "error" ? "Error" : "Warning";
         const styledMessage = messageColor(`[${catagoryLabel}]: ${entry.message}`);
