@@ -43,6 +43,11 @@ export interface ServerHandle {
     stop: () => Promise<void>;
 }
 
+// 目录软链；Windows 上使用 junction 以支持目录软链
+export function linkDirectory(target: string, path: string) {
+    nodeFs.symlinkSync(target, path, process.platform === "win32" ? "junction" : "dir");
+}
+
 // fixture 复制到独立临时工作区；软链 CLI 自带依赖，使编译产物中的 qingkuai 运行时 import 可解析
 export function createWorkspace(fixture: string, links: string[] = ["qingkuai"]): string {
     const workspace = nodeFs.mkdtempSync(nodePath.join(nodeOs.tmpdir(), WORKSPACE_PREFIX));
@@ -53,10 +58,9 @@ export function createWorkspace(fixture: string, links: string[] = ["qingkuai"])
     const modulesDir = nodePath.join(workspace, "node_modules");
     nodeFs.mkdirSync(modulesDir, { recursive: true });
     for (const name of links) {
-        nodeFs.symlinkSync(
+        linkDirectory(
             nodePath.join(REPO_ROOT, "node_modules", name),
             nodePath.join(modulesDir, name),
-            "dir",
         );
     }
     return workspace;

@@ -5,19 +5,18 @@ import nodeOs from "node:os";
 import nodePath from "node:path";
 import nodeChildProcess from "node:child_process";
 
-import { CLI_ENTRY, REPO_ROOT, disposeWorkspace, spawnCli } from "./helpers";
+import { CLI_ENTRY, REPO_ROOT, disposeWorkspace, linkDirectory, spawnCli } from "./helpers";
 
 // 生成物直接过 check + build 形成闭环：模板正确性验证。
 function linkRuntime(dir: string) {
     const modulesDir = nodePath.join(dir, "node_modules");
     nodeFs.mkdirSync(modulesDir, { recursive: true });
-    nodeFs.symlinkSync(
+    linkDirectory(
         nodePath.join(REPO_ROOT, "node_modules", "qingkuai"),
         nodePath.join(modulesDir, "qingkuai"),
-        "dir",
     );
     nodeFs.mkdirSync(nodePath.join(modulesDir, "@qingkuai"));
-    nodeFs.symlinkSync(REPO_ROOT, nodePath.join(modulesDir, "@qingkuai", "cli"), "dir");
+    linkDirectory(REPO_ROOT, nodePath.join(modulesDir, "@qingkuai", "cli"));
 }
 
 let workspace: string;

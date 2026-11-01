@@ -66,7 +66,7 @@ export function createDiagnosticFormatter(options: DiagnosticFormatterOptions = 
 
     const format = (entry: DiagnosticEntry, maxLineWidth: number): string => {
         const withCode = !isUndefined(entry.code);
-        const shownPath = getShownPath(entry.filePath);
+        const shownPath = getShownPath(entry.filePath).replaceAll("\\", "/");
         const messageColor = entry.category === "error" ? red : yellow;
         const catagoryLabel = entry.category === "error" ? "Error" : "Warning";
         const styledMessage = messageColor(`[${catagoryLabel}]: ${entry.message}`);
